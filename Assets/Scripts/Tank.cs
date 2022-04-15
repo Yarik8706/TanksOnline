@@ -4,6 +4,7 @@ using System.Net.Sockets;
 using Mirror;
 using UnityEngine;
 using UnityEngine.UI;
+using Random = UnityEngine.Random;
 
 public class Tank : NetworkBehaviour
 {
@@ -29,8 +30,8 @@ public class Tank : NetworkBehaviour
     [Header("Stats")] 
     [SyncVar (hook = "ChangedPlayerName")] public string playerName;
     [SyncVar] public int health = 4;
-    [SyncVar (hook = "ChangedBodyLampsState")] public bool bodyLampOn = true;
-    [SyncVar (hook = "ChangedTurretLampsState")] public bool turretLampOn = true;
+    [SyncVar] public bool bodyLampOn = true;
+    [SyncVar] public bool turretLampOn = true;
 
     internal static Tank localPlayerTank;
     internal static Text speedAttackTimeText;
@@ -70,6 +71,8 @@ public class Tank : NetworkBehaviour
     private void Update()
     {
         healthBar.text = new string('-', health);
+        CheckingBodyLampsState();
+        CheckingTurretLampsState();
         if (transform.position.y < -10)
         {
             Dead();
@@ -133,13 +136,13 @@ public class Tank : NetworkBehaviour
         bodyLampOn = !bodyLampOn;
     }
 
-    private void ChangedBodyLampsState(bool oldValue, bool state)
+    private void CheckingBodyLampsState()
     {
         foreach (var lamp in bodyLamps) 
         {
-            lamp.SetActive(state);
+            lamp.SetActive(bodyLampOn);
         }
-        playerStats.gameObject.SetActive(state);
+        playerStats.gameObject.SetActive(bodyLampOn);
         if (localPlayerTank == this)
         {
             playerStats.gameObject.SetActive(true);
@@ -152,10 +155,10 @@ public class Tank : NetworkBehaviour
         turretLampOn = !turretLampOn;
     }
 
-    private void ChangedTurretLampsState(bool oldValue, bool state)
+    private void CheckingTurretLampsState()
     {
-        turretLamp.SetActive(state);
-        playerStats.gameObject.SetActive(state);
+        turretLamp.SetActive(turretLampOn);
+        playerStats.gameObject.SetActive(turretLampOn);
         if (localPlayerTank == this)
         {
             playerStats.gameObject.SetActive(true);
@@ -198,17 +201,31 @@ public class Tank : NetworkBehaviour
         bullet.creater.GetComponent<KillCount>().killCount++;
     }
  
-    [ClientRpc]
+    [Server]
     private void Dead()
     {
-        if(isLocalPlayer) GameManager.respawnTime.SetActive(true);
         health = 4;
-        turret.rotation = new Quaternion(0,0,0,0);
-        transform.rotation = new Quaternion(0,0,0,0);
-        var controller = Instantiate(deadController);
-        controller.GetComponent<DeadController>().Active(gameObject);
+        var nextPosition = GameManager.gameManager.startPositions[
+            Random.Range(0, GameManager.gameManager.startPositions.Length)].position;
+        DeathSync(nextPosition);
+        CreateDeadController(nextPosition);
     }
 
+    [ClientRpc]
+    private void DeathSync(Vector3 nextPosition)
+    {
+        if(isLocalPlayer) GameManager.respawnTime.SetActive(true);
+        turret.rotation = new Quaternion(0,0,0,0);
+        transform.rotation = new Quaternion(0,0,0,0);
+        CreateDeadController(nextPosition);
+    }
+
+    private void CreateDeadController(Vector3 nextPosition)
+    {
+        var controller = Instantiate(deadController);
+        controller.GetComponent<DeadController>().Active(gameObject, nextPosition);
+    }
+    
     private void RotateTurretUpdate()
     {
         var positionLook = InputHandler.GetTurretRotation(transform.position);

@@ -4,8 +4,9 @@ using Random = UnityEngine.Random;
 
 public class DeadController : MonoBehaviour
 {
-    public void Active(GameObject deadObject)
+    public void Active(GameObject deadObject, Vector3 nextPosition)
     {
+        deadObject.transform.position = nextPosition;
         deadObject.SetActive(false);
         StartCoroutine(Respawn(deadObject));
     }
@@ -14,8 +15,6 @@ public class DeadController : MonoBehaviour
     {
         yield return new WaitForSeconds(5);
         deadObject.SetActive(true);
-        deadObject.transform.position =
-            GameManager.gameManager.startPositions[Random.Range(0, GameManager.gameManager.startPositions.Length)].position;
         Destroy(gameObject);
     }
 }
