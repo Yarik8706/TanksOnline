@@ -19,6 +19,7 @@ namespace UI
 
         public void StartHost()
         {
+            StopAll();
             connection.StartHost();
             _lanManagerController.StartConnectionServer();
             loginActiveButtonUI.CloseLoginUI();
@@ -26,12 +27,14 @@ namespace UI
 
         public void StartClient()
         {
+            StopAll();
             _lanManagerController.StartConnectionClient();
             ChangeUILayout();
         }
 
         public void StartOnlyServer()
         {
+            StopAll();
             connection.StartOnlyServer();
             _lanManagerController.StartConnectionServer();
             loginActiveButtonUI.CloseLoginUI();
@@ -41,6 +44,12 @@ namespace UI
         {
             connection.StopAll();
             _lanManagerController.StopAll();
+        }
+
+        public void ExitFindPlayersUI()
+        {
+            StopAll();
+            ChangeUILayout();
         }
 
         public void ChangeUILayout()

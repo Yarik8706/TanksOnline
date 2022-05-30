@@ -23,14 +23,20 @@ namespace Gameplay
         {
             _killCountsStatsUI.AddPlayer(playerName);
         }
-    
+        
         public void DeletePlayerStats(string playerName)
         {
+            killCount = -1;
             _killCountsStatsUI.DeletePlayerStats(playerName);
         }
 
         private void ChangedKillCount(int oldValue, int value)
         {
+            if (killCount == -1 && _killCountsStatsUI.HasKey(LoginUI.playerName))
+            {
+                _killCountsStatsUI.DeletePlayerStats(LoginUI.playerName);
+                return;
+            }
             _killCountsStatsUI.UpdatePlayerStats(_playerObject.playerName, value);
         }
 

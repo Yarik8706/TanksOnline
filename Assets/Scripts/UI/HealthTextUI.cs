@@ -6,16 +6,16 @@ namespace UI
 {
     public class HealthTextUI : MonoBehaviour
     {
-        private Text textUI;
+        private Text _textUI;
 
         private void Start()
         {
-            textUI = GetComponent<Text>();
+            _textUI = GetComponent<Text>();
         }
 
         private void Update()
         {
-            textUI.text = new string('-', Tank.localTank.health);
+            _textUI.text = new string('-', Tank.localTank.health);
         }
     }
 }

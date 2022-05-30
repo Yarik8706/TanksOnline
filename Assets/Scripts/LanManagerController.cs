@@ -12,7 +12,8 @@ public class LanManagerController : MonoBehaviour
     public Connection connection;
     
     private LanManager _lanManager;
-    
+    public const int Port = 4500;
+ 
     private void Start()
     {
         _lanManager = GetComponent<LanManager>();
@@ -20,21 +21,21 @@ public class LanManagerController : MonoBehaviour
 
     public void StartConnectionClient()
     {
-        _lanManager.StartClient(3000);
+        _lanManager.StartClient(Port);
         _lanManager.ScanHost();
         FindServers();
     }
 
     public void StartConnectionServer()
     {
-        _lanManager.StartServer(3000);
+        _lanManager.StartServer(Port);
         _lanManager.ScanHost();
     }
 
     public void FindServers()
     {
         ClearActiveServer();
-        StartCoroutine(_lanManager.SendPing(3000));
+        StartCoroutine(_lanManager.SendPing(Port));
         StartCoroutine(WaitFindServers());
     }
 

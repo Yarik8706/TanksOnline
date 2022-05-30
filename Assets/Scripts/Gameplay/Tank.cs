@@ -42,9 +42,9 @@ namespace Gameplay
 
         internal static Tank localTank;
         internal static Text speedAttackTimeText;
+        internal KillCount killCountStats;
         private float _speedAttackTime;
         private bool _canRotationTurret = true;
-        private KillCount _killCountStats;
         private TimeToRespawnUI _timeToRespawnUI;
         private Camera _mainCamera;
         private BoxCollider _boxCollider;
@@ -53,7 +53,7 @@ namespace Gameplay
 
         private void Awake()
         {
-            _killCountStats = GetComponent<KillCount>();
+            killCountStats = GetComponent<KillCount>();
             _mainCamera = Camera.main;
         }
 
@@ -96,7 +96,7 @@ namespace Gameplay
         
             var vertical = InputHandler.GetVerticalMovementChanges();
             var nextPosition = transform.forward * vertical;
-            _rigidbody.velocity = nextPosition * (movementSpeed * Time.deltaTime * 100);
+            _rigidbody.velocity = nextPosition * (movementSpeed * Time.deltaTime * 50);
             _animator.SetBool("Moving", nextPosition != Vector3.zero);
         
             RotateTurretUpdate();
@@ -185,11 +185,11 @@ namespace Gameplay
             playerNameBar.text = value;
             if (string.IsNullOrEmpty(oldName) || string.IsNullOrWhiteSpace(oldName))
             {
-                _killCountStats.AddPlayerStats(value);
+                killCountStats.AddPlayerStats(value);
             }
             else
             {
-                _killCountStats.ChangedPlayerName(oldName, value);
+                killCountStats.ChangedPlayerName(oldName, value);
             }
         }
     

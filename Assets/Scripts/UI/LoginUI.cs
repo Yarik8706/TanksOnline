@@ -18,8 +18,10 @@ namespace UI
             var host = Dns.GetHostEntry(Dns.GetHostName());
             foreach (var ip in host.AddressList)
             {
-                if (ip.AddressFamily != AddressFamily.InterNetwork || !ip.ToString().Contains("192.168.")) continue;
-                return ip.ToString();
+                if (ip.AddressFamily == AddressFamily.InterNetwork)
+                {
+                    return ip.ToString();
+                }
             }
 
             return "Name";
@@ -27,7 +29,7 @@ namespace UI
 
         public void SetPlayerName(string value)
         {
-            playerName = value;
+            _playerName = value;
         }
     }
 }

@@ -15,7 +15,7 @@ namespace UI
             var text = textObject.GetComponent<Text>();
             _playerStats.Add(namePlayer, text);
             text.text = namePlayer + " : " + 0;
-        }
+        } 
 
         public void UpdatePlayerStats(string namePlayer, int count = 0)
         {
@@ -32,6 +32,7 @@ namespace UI
 
         public void DeletePlayerStats(string key)
         {
+            if(!_playerStats.ContainsKey(key)) return;
             Destroy(_playerStats[key].gameObject);
             _playerStats.Remove(key);
         }

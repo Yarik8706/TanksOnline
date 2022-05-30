@@ -8,7 +8,6 @@ public class MessageHandler : MonoBehaviour
 
     public void AddMessage(string message)
     {
-        // var newMessage = Instantiate(textPrefab, messageContainer.transform, true);
-        // newMessage.GetComponent<Text>().text = message;
+        Instantiate(textPrefab, messageContainer.transform, true).GetComponent<Text>().text = message;
     }
 }
