@@ -12,6 +12,7 @@ namespace UI
 
         private void Update()
         {
+            if(Tank.localTank == null) return;
             turretLampActionText.text = Tank.localTank.turretLampOn ? "Выключить свет на пушке" : "Включить свет на пушке";
             bodyLampsActionText.text = Tank.localTank.bodyLampOn ? "Выключить свет на копусе" : "Включить свет на корпусе";
         }

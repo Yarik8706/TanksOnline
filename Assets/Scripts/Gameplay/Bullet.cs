@@ -33,10 +33,10 @@ namespace Gameplay
         
         private void SpawnEffect()
         {
-            Instantiate(deadEffect, transform.position, Quaternion.identity);
+            Instantiate(deadEffect, transform.position + transform.forward * -.4f, Quaternion.identity);
         }
         
-        private void OnTriggerEnter(Collider collider)
+        private void OnTriggerEnter(Collider _)
         {
             SpawnEffect();
             DestroySelf();

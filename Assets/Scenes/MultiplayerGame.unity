@@ -855,10 +855,8 @@ GameObject:
   - component: {fileID: 69036020}
   - component: {fileID: 69036019}
   - component: {fileID: 69036018}
-  - component: {fileID: 69036023}
-  - component: {fileID: 69036024}
   m_Layer: 5
-  m_Name: LoginUICanvas
+  m_Name: ConnectionCanvas
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -946,35 +944,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
---- !u!114 &69036023
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 69036016}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1e922574152bfd140b8cb88505ce6719, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  textSearchingPlayer: {fileID: 961544519}
-  textNotActivePlayer: {fileID: 371759865}
-  activeServersContainer: {fileID: 1949376287}
-  buttonForConnectionPrefab: {fileID: 6892306138316802820, guid: 2109409e3bf91c84983420d87b817bca, type: 3}
-  connection: {fileID: 0}
---- !u!114 &69036024
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 69036016}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: aa8976cf5fe2ee5479c6efd3c2947450, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &70599728
 GameObject:
   m_ObjectHideFlags: 0
@@ -2570,7 +2539,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1136956893}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: LanManagerController, Assembly-CSharp
         m_MethodName: FindServers
         m_Mode: 1
@@ -5809,7 +5778,7 @@ GameObject:
   - component: {fileID: 709337080}
   - component: {fileID: 709337079}
   m_Layer: 5
-  m_Name: Login
+  m_Name: Connection
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -6804,7 +6773,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1136956889}
-        m_TargetAssemblyTypeName: UI.ButtonsHandlerUI, Assembly-CSharp
+        m_TargetAssemblyTypeName: ConnectionController, Assembly-CSharp
         m_MethodName: StartOnlyServer
         m_Mode: 1
         m_Arguments:
@@ -9449,10 +9418,10 @@ GameObject:
   m_Component:
   - component: {fileID: 1136956891}
   - component: {fileID: 1136956890}
-  - component: {fileID: 1136956889}
-  - component: {fileID: 1136956893}
-  - component: {fileID: 1136956892}
   - component: {fileID: 1136956894}
+  - component: {fileID: 1136956893}
+  - component: {fileID: 1136956889}
+  - component: {fileID: 1136956892}
   m_Layer: 0
   m_Name: CanvasController
   m_TagString: Untagged
@@ -9469,13 +9438,14 @@ MonoBehaviour:
   m_GameObject: {fileID: 1136956888}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f6fd2119f0f8402e952f98bec2347794, type: 3}
+  m_Script: {fileID: 11500000, guid: 2fc09e9385f74ace975ac29db877667c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  loginUI: {fileID: 709337077}
-  findPlayersUI: {fileID: 896626490}
-  connection: {fileID: 1282001522}
-  loginActiveButtonUI: {fileID: 1987592898}
+  connectionCanvas: {fileID: 709337077}
+  gameplayCanvas: {fileID: 70599728}
+  findServersCanvas: {fileID: 896626490}
+  serversContainer: {fileID: 1949376287}
+  availabaleServerButton: {fileID: 6892306138316802820, guid: 2109409e3bf91c84983420d87b817bca, type: 3}
 --- !u!114 &1136956890
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9511,9 +9481,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 1136956888}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: aa8976cf5fe2ee5479c6efd3c2947450, type: 3}
+  m_Script: {fileID: 11500000, guid: 88c37d3deca7a834d80cfd8d3cfcc510, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  networkDiscovery: {fileID: 1136956893}
 --- !u!114 &1136956893
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9523,14 +9494,41 @@ MonoBehaviour:
   m_GameObject: {fileID: 1136956888}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1e922574152bfd140b8cb88505ce6719, type: 3}
+  m_Script: {fileID: 11500000, guid: c761308e733c51245b2e8bb4201f46dc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  textSearchingPlayer: {fileID: 961544519}
-  textNotActivePlayer: {fileID: 371759865}
-  activeServersContainer: {fileID: 1949376287}
-  buttonForConnectionPrefab: {fileID: 6892306138316802820, guid: 2109409e3bf91c84983420d87b817bca, type: 3}
-  connection: {fileID: 1282001522}
+  secretHandshake: -3129284366460009623
+  serverBroadcastListenPort: 47777
+  enableActiveDiscovery: 1
+  ActiveDiscoveryInterval: 3
+  transport: {fileID: 1282001519}
+  OnServerFound:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 0}
+        m_TargetAssemblyTypeName: Mirror.Discovery.NetworkDiscoveryHUD, Mirror.Components
+        m_MethodName: OnDiscoveredServer
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: 
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 1136956892}
+        m_TargetAssemblyTypeName: Mirror.Discovery.NetworkDiscoveryHUD, Mirror.Components
+        m_MethodName: OnDiscoveredServer
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: 
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1136956894
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10827,8 +10825,8 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1136956889}
-        m_TargetAssemblyTypeName: UI.ButtonsHandlerUI, Assembly-CSharp
-        m_MethodName: StartClient
+        m_TargetAssemblyTypeName: ConnectionController, Assembly-CSharp
+        m_MethodName: FindServers
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -11143,7 +11141,6 @@ GameObject:
   - component: {fileID: 1282001518}
   - component: {fileID: 1282001520}
   - component: {fileID: 1282001519}
-  - component: {fileID: 1282001522}
   m_Layer: 0
   m_Name: NetworkManager
   m_TagString: Untagged
@@ -11221,19 +11218,9 @@ MonoBehaviour:
   playerSpawnMethod: 0
   spawnPrefabs:
   - {fileID: 5890560936853567077, guid: b7dd46dbf38c643f09e206f9fa4be008, type: 3}
+  - {fileID: 2620131183356007192, guid: c01d037d612618f45b586d5a71e2a8c1, type: 3}
+  - {fileID: 7206487202543584397, guid: a9edacd89adc28a438906bdd009da89a, type: 3}
   killCountsStatsUI: {fileID: 1181384774}
---- !u!114 &1282001522
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1282001517}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2fc09e9385f74ace975ac29db877667c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1001 &1292348379
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -11459,8 +11446,8 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1136956889}
-        m_TargetAssemblyTypeName: UI.ButtonsHandlerUI, Assembly-CSharp
-        m_MethodName: ChangeUILayout
+        m_TargetAssemblyTypeName: ConnectionController, Assembly-CSharp
+        m_MethodName: StopFindServers
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -12683,7 +12670,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1136956889}
-        m_TargetAssemblyTypeName: UI.ButtonsHandlerUI, Assembly-CSharp
+        m_TargetAssemblyTypeName: ConnectionController, Assembly-CSharp
         m_MethodName: StopAll
         m_Mode: 1
         m_Arguments:
@@ -13892,7 +13879,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1136956889}
-        m_TargetAssemblyTypeName: UI.ButtonsHandlerUI, Assembly-CSharp
+        m_TargetAssemblyTypeName: ConnectionUI, Assembly-CSharp
         m_MethodName: StartHost
         m_Mode: 1
         m_Arguments:
@@ -15947,7 +15934,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1893671439
 RectTransform:
   m_ObjectHideFlags: 0
@@ -16309,36 +16296,6 @@ MonoBehaviour:
   m_ChildScaleWidth: 0
   m_ChildScaleHeight: 0
   m_ReverseArrangement: 0
---- !u!1 &1951771711
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1951771712}
-  m_Layer: 0
-  m_Name: ConnectionHandlerUI
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &1951771712
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1951771711}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_RootOrder: 13
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1965649670
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -16684,7 +16641,6 @@ GameObject:
   - component: {fileID: 1987592897}
   - component: {fileID: 1987592896}
   - component: {fileID: 1987592895}
-  - component: {fileID: 1987592898}
   m_Layer: 5
   m_Name: OpenLoginUI
   m_TagString: Untagged
@@ -16756,9 +16712,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1987592898}
-        m_TargetAssemblyTypeName: UI.ButtonLoginUIController, Assembly-CSharp
-        m_MethodName: ChangeActiveLoginUI
+      - m_Target: {fileID: 1136956889}
+        m_TargetAssemblyTypeName: ConnectionController, Assembly-CSharp
+        m_MethodName: ChangeConnectionMenuState
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -16806,21 +16762,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1987592893}
   m_CullTransparentMesh: 1
---- !u!114 &1987592898
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1987592893}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8b6787aebe0e479ea469c92d40ce45f4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  canvas: {fileID: 70599728}
-  loginUI: {fileID: 69036016}
-  openCloseText: {fileID: 478721228}
 --- !u!1001 &1988172525
 PrefabInstance:
   m_ObjectHideFlags: 0

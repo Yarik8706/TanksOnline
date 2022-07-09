@@ -15,6 +15,7 @@ namespace UI
 
         private void Update()
         {
+            if(Tank.localTank == null) return;
             _textUI.text = new string('-', Tank.localTank.health);
         }
     }

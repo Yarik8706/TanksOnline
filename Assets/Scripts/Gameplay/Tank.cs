@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using Mirror;
 using UI;
 using UnityEngine;
@@ -10,10 +11,10 @@ namespace Gameplay
     public class Tank : NetworkBehaviour
     {
         [Header("Components")]
+        public Animator animator;
         public TextMesh healthBar;
         public TextMesh playerNameBar;
         public GameObject playerStats;
-        public GameObject deadController;
         public Transform turret;
         public GameObject turretLamp;
         public GameObject[] bodyLamps;
@@ -39,7 +40,9 @@ namespace Gameplay
         [SyncVar] public int health = 4;
         [SyncVar] public bool bodyLampOn = true;
         [SyncVar] public bool turretLampOn = true;
-
+        
+        private Rigidbody _rigidbody3D;
+        private BoxCollider _boxCollider;
         internal static Tank localTank;
         internal static Text speedAttackTimeText;
         internal KillCount killCountStats;
@@ -47,21 +50,19 @@ namespace Gameplay
         private bool _canRotationTurret = true;
         private TimeToRespawnUI _timeToRespawnUI;
         private Camera _mainCamera;
-        private BoxCollider _boxCollider;
-        private Rigidbody _rigidbody; 
-        private Animator _animator;
 
         private void Awake()
         {
+            _rigidbody3D = GetComponent<Rigidbody>();
+            _boxCollider = GetComponent<BoxCollider>();
             killCountStats = GetComponent<KillCount>();
             _mainCamera = Camera.main;
+            if (!isLocalPlayer) return;
+            localTank = this;
         }
 
         private void Start()
         {
-            _animator = GetComponent<Animator>();
-            _rigidbody = GetComponent<Rigidbody>();
-            _boxCollider = GetComponent<BoxCollider>();
             _timeToRespawnUI = FindObjectOfType<TimeToRespawnUI>();
             _speedAttackTime = speedAttack;
             if (!isLocalPlayer) return;
@@ -96,8 +97,8 @@ namespace Gameplay
         
             var vertical = InputHandler.GetVerticalMovementChanges();
             var nextPosition = transform.forward * vertical;
-            _rigidbody.velocity = nextPosition * (movementSpeed * Time.deltaTime * 50);
-            _animator.SetBool("Moving", nextPosition != Vector3.zero);
+            _rigidbody3D.velocity = nextPosition * (movementSpeed * Time.deltaTime * 50);
+            animator.SetBool("Moving", nextPosition != Vector3.zero);
         
             RotateTurretUpdate();
             AttackUpdate();
@@ -134,8 +135,7 @@ namespace Gameplay
             _canRotationTurret = false;
             _speedAttackTime = speedAttack;
         }
-
-        // this is called on the server
+        
         [Command]
         private void CommandSpawnBullet()
         {
@@ -203,60 +203,77 @@ namespace Gameplay
         private void AttackSync()
         {
             attackShound.Play();
-            _animator.SetTrigger("Shoot");
+            animator.SetTrigger("Shoot");
         }
 
         [ServerCallback]
         private void OnTriggerEnter(Collider other)
         {
-            var bullet = other.GetComponent<Bullet>();
-            if (bullet == null) return;
+            if (!(other.GetComponent<Bullet>() is {} bullet)) return;
             --health;
             if (health != 0) return;
-            if (bullet.creater != null) bullet.creater.GetComponent<KillCount>().killCount++;
-            _boxCollider.enabled = false;
+            if (bullet.creater != null)
+            {
+                Dead(bullet.creater);
+                return;
+            }
+            Dead();
+        }
+
+        [ServerCallback]
+        private void Dead()
+        {
+            var nextPosition = GameManager.gameManager.startPositions[
+                Random.Range(0, GameManager.gameManager.startPositions.Length)].position;
+            DeathSync();
+            NetworkServer.Spawn(Instantiate(deadEffect, transform.position, Quaternion.identity));
+            ChangeComponentStateInDied(false);
+            StartCoroutine(RespawnCoroutine(nextPosition));
+        }
+        
+        [Server]
+        private void Dead(GameObject bulletCreator)
+        {
+            bulletCreator.GetComponent<KillCount>().killCount++;
             var newPikupHealth = Instantiate(pikupHealth, transform.position, Quaternion.identity);
             NetworkServer.Spawn(newPikupHealth);
             Dead();
         }
- 
-        [Server]
-        private void Dead()
+
+        [ClientRpc]
+        private void DeathSync()
         {
-            health = 4;
-            var nextPosition = GameManager.gameManager.startPositions[
-                Random.Range(0, GameManager.gameManager.startPositions.Length)].position;
-            DeathSync(nextPosition);
-            CreateDeadController(nextPosition);
+            if (isLocalPlayer) _timeToRespawnUI.StartCounting(respawnTime);
+            ChangeComponentStateInDied(false);
+            turret.rotation = new Quaternion(0,0,0,0);
+            transform.rotation = new Quaternion(0,0,0,0);
         }
 
-        private void OnEnable()
+        [Server]
+        private IEnumerator RespawnCoroutine(Vector3 nextPosition)
         {
-            if (!isLocalPlayer) return;
-            _boxCollider.enabled = true;
-            SwitchCameras(false);
+            yield return new WaitForSeconds(respawnTime);
+            transform.position = nextPosition;
+            health = 4;
+            RespawnSync();
+            ChangeComponentStateInDied(true);
+        }
+
+        private void ChangeComponentStateInDied(bool state)
+        {
+            _boxCollider.enabled = state;
+            _rigidbody3D.isKinematic = !state;
+            animator.gameObject.SetActive(state);
+            playerStats.SetActive(state);
+            if(isLocalPlayer) SwitchCameras(!state);
         }
 
         [ClientRpc]
-        private void DeathSync(Vector3 nextPosition)
+        private void RespawnSync()
         {
-            if (isLocalPlayer)
-            {
-                _timeToRespawnUI.StartCounting(respawnTime);
-                SwitchCameras(true);
-            }
-            turret.rotation = new Quaternion(0,0,0,0);
-            transform.rotation = new Quaternion(0,0,0,0);
-            CreateDeadController(nextPosition);
+            ChangeComponentStateInDied(true);
         }
 
-        private void CreateDeadController(Vector3 nextPosition)
-        {
-            Instantiate(deadEffect, transform.position, Quaternion.identity);
-            var controller = Instantiate(deadController);
-            controller.GetComponent<DeadController>().Active(gameObject, nextPosition, respawnTime);
-        }
-    
         private void RotateTurretUpdate()
         {
             var rotationValues = InputHandler.GetTurretRotation();

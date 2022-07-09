@@ -1,10 +1,24 @@
 ﻿using System.Collections.Generic;
+using Gameplay;
+using Mirror;
 using UnityEngine;
 using UnityEngine.UI;
 
 namespace UI
 {
-    public class KillCountsStatsUI : MonoBehaviour
+    public struct KillStats
+    {
+        public string playerName;
+        public int killCount;
+
+        public KillStats(string playerName, int killCount)
+        {
+            this.killCount = killCount;
+            this.playerName = playerName;
+        }
+    }
+        
+    public class KillCountsStatsUI : NetworkBehaviour
     {
         public Text textPrefab;
         private readonly Dictionary<string, Text> _playerStats = new Dictionary<string, Text>();
@@ -15,7 +29,7 @@ namespace UI
             var text = textObject.GetComponent<Text>();
             _playerStats.Add(namePlayer, text);
             text.text = namePlayer + " : " + 0;
-        } 
+        }
 
         public void UpdatePlayerStats(string namePlayer, int count = 0)
         {

@@ -9,11 +9,11 @@ namespace UI
         private static string _playerName;
         public static string playerName
         {
-            get => string.IsNullOrEmpty(_playerName) ? SetPlayerNameIpAddress() : _playerName;
+            get => string.IsNullOrEmpty(_playerName) ? SetBaseName() : _playerName;
             private set => _playerName = value;
         }
         
-        private static string SetPlayerNameIpAddress()
+        private static string SetBaseName()
         {
             var host = Dns.GetHostEntry(Dns.GetHostName());
             foreach (var ip in host.AddressList)
@@ -27,7 +27,7 @@ namespace UI
             return "Name";
         }
 
-        public void SetPlayerName(string value)
+        public void SetName(string value)
         {
             _playerName = value;
         }

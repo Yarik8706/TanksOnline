@@ -1,5 +1,4 @@
-﻿using Gameplay;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 
 namespace UI
@@ -9,7 +8,7 @@ namespace UI
         public Text title;
         public string hostname;
         public string serverName;
-        public LanManagerController connection;
+        public ConnectionController connection;
 
         private void Start()
         {
@@ -18,7 +17,7 @@ namespace UI
 
         public void ClientConnection()
         {
-            connection.ConnectionToServer(hostname);
+            connection.StartClient(hostname);
         }
     }
 }
