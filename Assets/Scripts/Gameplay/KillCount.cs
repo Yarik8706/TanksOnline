@@ -1,12 +1,13 @@
-﻿using Mirror;
+﻿using System;
+using Mirror;
 using UI;
+using UnityEngine;
 
 namespace Gameplay
 {
     public class KillCount : NetworkBehaviour
     {
-        [SyncVar (hook = nameof(ChangedKillCount))] internal int killCount;
-        private Tank _playerObject;
+        public readonly SyncDictionary<string, int> killStats = new SyncDictionary<string, int>();
         private KillCountsStatsUI _killCountsStatsUI;
 
         private void Awake()
@@ -14,35 +15,27 @@ namespace Gameplay
             _killCountsStatsUI = FindObjectOfType<KillCountsStatsUI>();
         }
 
-        public void Start()
-        {
-            _playerObject = GetComponent<Tank>();
-        }
-
+        [ServerCallback]
         public void AddPlayerStats(string playerName)
         {
-            _killCountsStatsUI.AddPlayer(playerName);
+            killStats.Add(playerName, 0);
         }
-        
+
+        private void Update()
+        {
+            UpdateDataForPlayer();
+        }
+
+        private void UpdateDataForPlayer()
+        {
+            if(!isLocalPlayer) return;
+            _killCountsStatsUI.UpdatePlayersStats(killStats);
+        }
+
+        [ServerCallback]
         public void DeletePlayerStats(string playerName)
         {
-            killCount = -1;
-            _killCountsStatsUI.DeletePlayerStats(playerName);
-        }
-
-        private void ChangedKillCount(int oldValue, int value)
-        {
-            if (killCount == -1 && _killCountsStatsUI.HasKey(LoginUI.playerName))
-            {
-                _killCountsStatsUI.DeletePlayerStats(LoginUI.playerName);
-                return;
-            }
-            _killCountsStatsUI.UpdatePlayerStats(_playerObject.playerName, value);
-        }
-
-        public void ChangedPlayerName(string oldValue, string value)
-        {
-            _killCountsStatsUI.UpdatePlayerName(oldValue, value);
+            killStats.Remove(playerName);
         }
     }
 }

@@ -36,7 +36,7 @@ namespace Gameplay
 
         [Header("Stats")] 
         public float respawnTime = 5;
-        [SyncVar (hook = nameof(ChangedPlayerName))] public string playerName;
+        public string playerName;
         [SyncVar] public int health = 4;
         [SyncVar] public bool bodyLampOn = true;
         [SyncVar] public bool turretLampOn = true;
@@ -50,7 +50,7 @@ namespace Gameplay
         private bool _canRotationTurret = true;
         private TimeToRespawnUI _timeToRespawnUI;
         private Camera _mainCamera;
-
+        
         private void Awake()
         {
             _rigidbody3D = GetComponent<Rigidbody>();
@@ -180,23 +180,11 @@ namespace Gameplay
             }
         }
 
-        private void ChangedPlayerName(string oldName, string value)
-        {
-            playerNameBar.text = value;
-            if (string.IsNullOrEmpty(oldName) || string.IsNullOrWhiteSpace(oldName))
-            {
-                killCountStats.AddPlayerStats(value);
-            }
-            else
-            {
-                killCountStats.ChangedPlayerName(oldName, value);
-            }
-        }
-    
         [Command]
         private void SetPlayerName(string newName)
         {
-            playerName = newName;
+            playerName = newName; 
+            killCountStats.AddPlayerStats(playerName);
         }
     
         [ClientRpc]
@@ -225,16 +213,17 @@ namespace Gameplay
         {
             var nextPosition = GameManager.gameManager.startPositions[
                 Random.Range(0, GameManager.gameManager.startPositions.Length)].position;
+            health = 4;
             DeathSync();
             NetworkServer.Spawn(Instantiate(deadEffect, transform.position, Quaternion.identity));
             ChangeComponentStateInDied(false);
             StartCoroutine(RespawnCoroutine(nextPosition));
         }
         
-        [Server]
+        [ServerCallback]
         private void Dead(GameObject bulletCreator)
         {
-            bulletCreator.GetComponent<KillCount>().killCount++;
+            bulletCreator.GetComponent<KillCount>().killStats[playerName]++;
             var newPikupHealth = Instantiate(pikupHealth, transform.position, Quaternion.identity);
             NetworkServer.Spawn(newPikupHealth);
             Dead();
@@ -254,7 +243,6 @@ namespace Gameplay
         {
             yield return new WaitForSeconds(respawnTime);
             transform.position = nextPosition;
-            health = 4;
             RespawnSync();
             ChangeComponentStateInDied(true);
         }
