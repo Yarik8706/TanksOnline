@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace UI
 {
-    public class LoginUI : MonoBehaviour
+    public class PlayerNameControllerUI : MonoBehaviour
     {
         private static string _playerName;
         public static string playerName
@@ -29,7 +29,7 @@ namespace UI
 
         public void SetName(string value)
         {
-            _playerName = value;
+            playerName = value;
         }
     }
 }

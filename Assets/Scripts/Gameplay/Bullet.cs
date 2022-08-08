@@ -17,6 +17,7 @@ namespace Gameplay
 
         public override void OnStartServer()
         {
+            base.OnStartServer();
             Invoke(nameof(DestroySelf), destroyAfter);
         }
 
@@ -28,14 +29,16 @@ namespace Gameplay
         [ServerCallback]
         private void DestroySelf()
         {
-            if(gameObject != null) NetworkServer.Destroy(gameObject);
+            NetworkServer.Destroy(gameObject);
         }
         
         private void SpawnEffect()
         {
-            Instantiate(deadEffect, transform.position + transform.forward * -.4f, Quaternion.identity);
+            var effect = Instantiate(deadEffect, transform.position + transform.forward * -.4f, Quaternion.identity);
+            NetworkServer.Spawn(effect);
         }
         
+        [ServerCallback]
         private void OnTriggerEnter(Collider _)
         {
             SpawnEffect();

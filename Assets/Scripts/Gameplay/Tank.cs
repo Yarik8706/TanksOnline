@@ -36,7 +36,7 @@ namespace Gameplay
 
         [Header("Stats")] 
         public float respawnTime = 5;
-        public string playerName;
+        [SyncVar (hook = nameof(UpdatePlayerName))] public string playerName;
         [SyncVar] public int health = 4;
         [SyncVar] public bool bodyLampOn = true;
         [SyncVar] public bool turretLampOn = true;
@@ -57,6 +57,7 @@ namespace Gameplay
             _boxCollider = GetComponent<BoxCollider>();
             killCountStats = GetComponent<KillCount>();
             _mainCamera = Camera.main;
+            
             if (!isLocalPlayer) return;
             localTank = this;
         }
@@ -66,7 +67,8 @@ namespace Gameplay
             _timeToRespawnUI = FindObjectOfType<TimeToRespawnUI>();
             _speedAttackTime = speedAttack;
             if (!isLocalPlayer) return;
-            SetPlayerName(LoginUI.playerName);
+            SetPlayerName(PlayerNameControllerUI.playerName);
+            if (isClientOnly) killCountStats.SyncPlayersStats();
             SwitchCameras(false);
             localTank = this;
             healthBar.gameObject.SetActive(false);
@@ -185,6 +187,12 @@ namespace Gameplay
         {
             playerName = newName; 
             killCountStats.AddPlayerStats(playerName);
+        }
+
+        private void UpdatePlayerName(string oldname, string newname)
+        {
+            playerName = newname;
+            playerNameBar.text = newname;
         }
     
         [ClientRpc]

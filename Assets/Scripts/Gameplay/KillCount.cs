@@ -9,10 +9,12 @@ namespace Gameplay
     {
         public readonly SyncDictionary<string, int> killStats = new SyncDictionary<string, int>();
         private KillCountsStatsUI _killCountsStatsUI;
-
-        private void Awake()
+        
+        public override void OnStartLocalPlayer()
         {
+            base.OnStartLocalPlayer();
             _killCountsStatsUI = FindObjectOfType<KillCountsStatsUI>();
+            killStats.Callback += UpdateStats;
         }
 
         [ServerCallback]
@@ -21,21 +23,41 @@ namespace Gameplay
             killStats.Add(playerName, 0);
         }
 
-        private void Update()
+        public void SyncPlayersStats()
         {
-            UpdateDataForPlayer();
-        }
-
-        private void UpdateDataForPlayer()
-        {
-            if(!isLocalPlayer) return;
-            _killCountsStatsUI.UpdatePlayersStats(killStats);
+            foreach (var killStatsKey in killStats.Keys)
+            {
+                if(killStatsKey == Tank.localTank.playerName) continue;
+                _killCountsStatsUI.AddPlayerStats(killStatsKey, killStats[killStatsKey]);
+            }
         }
 
         [ServerCallback]
         public void DeletePlayerStats(string playerName)
         {
             killStats.Remove(playerName);
+        }
+
+        public void UpdateStats(SyncIDictionary<string, int>.Operation op, string key, int item)
+        {
+            Debug.Log("VAR");
+            switch (op) 
+            {
+                case SyncIDictionary<string, int>.Operation.OP_ADD:
+                    _killCountsStatsUI.AddPlayerStats(key, 0);
+                    break;
+                case SyncIDictionary<string, int>.Operation.OP_CLEAR:
+                    _killCountsStatsUI.ClearAll();
+                    break;
+                case SyncIDictionary<string, int>.Operation.OP_REMOVE:
+                    _killCountsStatsUI.DeletePlayerStats(key);
+                    break;
+                case SyncIDictionary<string, int>.Operation.OP_SET:
+                    _killCountsStatsUI.UpdatePlayerStats(key, item);
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(op), op, null);
+            }
         }
     }
 }

@@ -151,7 +151,7 @@ MonoBehaviour:
   destroyAfter: 5
   force: 1000
   rigidBody: {fileID: 4629190479245867726}
-  deadEffect: {fileID: 100000, guid: f06e78284f831ae469c74624ab5d513b, type: 3}
+  deadEffect: {fileID: 9113984586649792606, guid: afbc3ac76808d8c489971de16b1125c6, type: 3}
 --- !u!54 &4629190479245867726
 Rigidbody:
   m_ObjectHideFlags: 0

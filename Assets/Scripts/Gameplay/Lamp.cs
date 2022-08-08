@@ -18,15 +18,20 @@ namespace Gameplay
         private Light _light;
         private LampsControllerUI _lampsControllerUI;
         public float blinkTime = 1f;
-        private float blinkTimeNow;
+        private float _blinkTimeNow;
 
-        private void Start()
+        public override void OnStartClient()
         {
-            blinkTimeNow = blinkTime;
-            _light = GetComponent<Light>();
+            base.OnStartClient();
             _lampsControllerUI = FindObjectOfType<LampsControllerUI>();
         }
 
+        private void Start()
+        {
+            _blinkTimeNow = blinkTime;
+            _light = GetComponent<Light>();
+        }
+        
         private void Update()
         {
             switch (lampState)
@@ -38,22 +43,24 @@ namespace Gameplay
                     _light.enabled = false;
                     break;
                 case (int)LampState.Blink:
-                    if (blinkTimeNow <= 0)
+                    if (_blinkTimeNow <= 0)
                     {
                         _light.enabled = !_light.enabled;
-                        blinkTimeNow = blinkTime;
+                        _blinkTimeNow = blinkTime;
                         return;
                     }
-                    blinkTimeNow -= Time.deltaTime;
+                    _blinkTimeNow -= Time.deltaTime;
                     break;
             }
         }
 
+        [Command]
         public void ChangeLampActive()
         {
             lampState = lampState == (int)LampState.On ? (int)LampState.Off : (int)LampState.On;
         }
 
+        [Command]
         public void ChangeLampBlickActive()
         {
             lampState = lampState == (int)LampState.On ? (int)LampState.Blink : (int)LampState.On;
@@ -63,20 +70,28 @@ namespace Gameplay
         {
             if (other.gameObject.GetComponent<Tank>() is {isLocalPlayer: true})
             {
+                if(_lampsControllerUI == null) GetLampsController();
                 _lampsControllerUI.ActiveButtons(this);
             }
+        }
+
+        private void GetLampsController()
+        {
+            _lampsControllerUI = FindObjectOfType<LampsControllerUI>();
         }
 
         private void OnTriggerStay(Collider other)
         {
             if (other.gameObject.GetComponent<Tank>() is {isLocalPlayer: true})
             {
+                if(_lampsControllerUI == null) GetLampsController();
                 _lampsControllerUI.ActiveButtons(this);
             }
         }
 
         private void OnTriggerExit(Collider other)
         {
+            if(_lampsControllerUI == null) GetLampsController();
             _lampsControllerUI.EnableButtons();
         }
     }

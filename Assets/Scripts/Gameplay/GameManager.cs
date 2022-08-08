@@ -12,6 +12,7 @@ namespace Gameplay
 
         private void Start()
         {
+            
             gameManager = this;
         }
     }

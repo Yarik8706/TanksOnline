@@ -1,6 +1,6 @@
 ﻿using System;
 using Gameplay;
-using kcp2k;
+using Mirror;
 using UnityEngine;
 
 namespace UI
@@ -8,7 +8,7 @@ namespace UI
     public class ConnectionToServerUI : MonoBehaviour
     {
         [SerializeField] private CustomNetworkManager customNetworkManager;
-        [SerializeField] private KcpTransport kcpTransport;
+        [SerializeField] private TelepathyTransport kcpTransport;
         private string _ipaddress;
         private string _port;
 
@@ -25,7 +25,14 @@ namespace UI
         public void StartConnection()
         {
             customNetworkManager.networkAddress = _ipaddress;
-            kcpTransport.Port = Convert.ToUInt16(_port);
+            kcpTransport.port = Convert.ToUInt16(_port);
+            customNetworkManager.StartClient();
+        }
+
+        public void AutoConnectionToServer()
+        {
+            customNetworkManager.networkAddress = "83.69.28.185";
+            kcpTransport.port = 48877;
             customNetworkManager.StartClient();
         }
     }

@@ -1,6 +1,4 @@
 ﻿using System.Collections.Generic;
-using Gameplay;
-using Mirror;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -11,48 +9,17 @@ namespace UI
         public Text textPrefab;
         public readonly Dictionary<string, Text> playerStats = new Dictionary<string, Text>();
 
-        public void AddPlayer(string namePlayer)
+        public void AddPlayerStats(string namePlayer, int stats)
         {
             var textObject = Instantiate(textPrefab, gameObject.transform, true);
             var text = textObject.GetComponent<Text>();
             playerStats.Add(namePlayer, text);
-            text.text = namePlayer + " : " + 0;
+            text.text = namePlayer + " : " + stats;
         }
 
-        public void UpdatePlayersStats(SyncDictionary<string, int> data)
+        public void UpdatePlayerStats(string playerName, int newStat)
         {
-            List<string> keys = new List<string>();
-            foreach (var key in playerStats.Keys)
-            {
-                if (data.ContainsKey(key))
-                {
-                    playerStats[key].text = key + " : " + data[key];
-                }
-                else
-                {
-                    keys.Add(key);
-                }
-            }
-
-            foreach (var key in keys)
-            {
-                Destroy(playerStats[key].gameObject);
-                playerStats.Remove(key);
-            }
-            keys.Clear();
-
-            foreach (var dataKey in data.Keys)
-            {
-                if (!playerStats.ContainsKey(dataKey))
-                {
-                    keys.Add(dataKey);
-                }
-            }
-
-            foreach (var key in keys)
-            {
-                AddPlayer(key);
-            }
+            playerStats[playerName].text = playerName + " : " + newStat;
         }
 
         public void UpdatePlayerName(string oldName, string newName)

@@ -90,4 +90,11 @@ public class ConnectionController : MonoBehaviour
         findServersCanvas.SetActive(false);
         connectionCanvas.SetActive(!connectionCanvas.activeSelf);
     }
+    
+    public void ChangeConnectionMenuState(bool activeGameplayMenu)
+    {
+        gameplayCanvas.SetActive(activeGameplayMenu);
+        findServersCanvas.SetActive(false);
+        connectionCanvas.SetActive(!activeGameplayMenu);
+    }
 }
